@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 TEMA 04 • Tabelas em HTML — Desafios Guiados v2</title>
+<style>
+  :root{
+    --bg-body:#06101c; --surface-dark:#0f1b2d; --surface-hover:#1b2a42;
+    --card-white:#ffffff; --primary:#0369a1; --primary-hover:#075985;
+    --primary-light:#38bdf8; --accent:#0d9488; --accent-light:#2dd4bf;
+    --text-dark:#0f172a; --text-muted:#64748b;
+    --border-light:#e2e8f0; --border-dark:#334155; --radius-main:20px;
+    --transicao:all .25s ease; --tok-bg:#0a1420;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(circle at 10% 15%,#062a3a 0%,#06101c 65%);
+    color:var(--text-dark);min-height:100vh;padding:24px 14px 90px;line-height:1.6;}
+  .container{max-width:1100px;margin:0 auto;}
+  .header{background:linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0d9488 100%);
+    border-radius:var(--radius-main);padding:38px 24px;margin-bottom:24px;text-align:center;
+    color:#fff;box-shadow:0 12px 35px rgba(3,105,161,.4);}
+  .header h1{font-size:2.1rem;margin-bottom:8px;letter-spacing:-.5px;
+    display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+  .header h1 span{color:#a7f3d0;}
+  .header p{opacity:.95;font-size:1.05rem;max-width:900px;margin:0 auto;}
+  .badge-group{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;}
+  .badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+    padding:5px 14px;border-radius:30px;font-size:.75rem;font-weight:700;color:#fff;}
+
+  .tabs-nav{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:22px;}
+  .tab-btn{background:var(--surface-dark);color:#94a3b8;border:1px solid var(--border-dark);
+    padding:12px 18px;border-radius:30px;font-size:.88rem;font-weight:700;cursor:pointer;
+    white-space:nowrap;transition:var(--transicao);font-family:inherit;}
+  .tab-btn:hover{color:#fff;background:var(--surface-hover);}
+  .tab-btn.active{background:linear-gradient(135deg,#075985,#0d9488);color:#fff;
+    border-color:#2dd4bf;box-shadow:0 0 16px rgba(13,148,136,.45);}
+
+  .tab-content{display:none;animation:fadeIn .3s ease-out;}
+  .tab-content.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{background:var(--card-white);border-radius:var(--radius-main);padding:28px;
+    margin-bottom:24px;box-shadow:0 10px 30px rgba(0,0,0,.15);}
+  .card h2{color:#075985;margin-bottom:14px;border-left:5px solid var(--primary);
+    padding-left:12px;font-size:1.45rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .card h3{color:#0f172a;margin:22px 0 10px 0;font-size:1.15rem;border-bottom:2px dashed #cbd5e1;padding-bottom:6px;}
+  .card h4{color:#1e293b;margin:18px 0 8px 0;font-size:1rem;font-weight:700;}
+  .card p{color:#334155;margin-bottom:12px;font-size:.96rem;}
+  .card ul,.card ol{color:#334155;line-height:1.8;margin:8px 0 14px 25px;font-size:.95rem;}
+
+  .highlight-box{padding:16px 20px;border-radius:12px;margin:14px 0;font-size:.94rem;line-height:1.7;}
+  .highlight-box.blue{background:#e0f2fe;border-left:5px solid #0284c7;color:#0c4a6e;}
+  .highlight-box.teal{background:#ccfbf1;border-left:5px solid #0d9488;color:#115e59;}
+  .highlight-box.amber{background:#fef3c7;border-left:5px solid #d97706;color:#78350f;}
+  .highlight-box.rose{background:#ffe4e6;border-left:5px solid #e11d48;color:#881337;}
+  .highlight-box.green{background:#dcfce7;border-left:5px solid #16a34a;color:#14532d;}
+  .highlight-box code{background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.15);
+    color:#0f172a;padding:2px 6px;border-radius:4px;font-weight:800;font-family:'Courier New',monospace;font-size:.88em;}
+
+  code{background:#f1f5f9;color:#0c4a6e;padding:2px 6px;border-radius:4px;
+    font-family:'Courier New',monospace;font-weight:700;font-size:.88em;border:1px solid var(--border-light);}
+
+  .tabela-logica{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem;}
+  .tabela-logica th{background:linear-gradient(135deg,#0c4a6e,#0d9488);color:#fff;padding:12px 14px;text-align:left;font-weight:600;}
+  .tabela-logica td{padding:12px 14px;border-bottom:1px solid var(--border-light);color:#334155;vertical-align:top;}
+  .tabela-logica tr:hover td{background:#f8fafc;}
+
+  .desenho-tabela-wrap{background:#f8fafc;border:2px solid var(--border-light);border-radius:14px;
+    padding:20px;margin:14px 0 8px;}
+  .desenho-tabela-caption{background:#0369a1;color:#fff;padding:10px 14px;
+    font-weight:700;font-size:.9rem;border-radius:8px 8px 0 0;text-align:left;
+    font-family:'Segoe UI',sans-serif;}
+  .desenho-tabela{width:100%;border-collapse:collapse;font-size:.88rem;background:#fff;
+    border:2px solid #0369a1;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;}
+  .desenho-tabela thead th{background:#082f49;color:#fff;padding:12px 14px;text-align:left;
+    font-weight:700;border:1px solid #1e3a5f;font-size:.86rem;}
+  .desenho-tabela tbody th{background:#e0f2fe;color:#0c4a6e;padding:12px 14px;text-align:left;
+    font-weight:700;border:1px solid #bfdbfe;font-size:.86rem;}
+  .desenho-tabela tbody td{background:#fff;color:#0f172a;padding:12px 14px;
+    border:1px solid #e2e8f0;font-size:.86rem;}
+  .desenho-tabela tfoot td{background:#f0fdf4;color:#166534;padding:12px 14px;
+    border:1px solid #bbf7d0;font-size:.86rem;font-weight:700;}
+  .desenho-tabela tfoot th{background:#dcfce7;color:#14532d;padding:12px 14px;
+    border:1px solid #86efac;font-size:.86rem;font-weight:700;text-align:left;}
+  .legenda-desenho{font-size:.82rem;color:#64748b;font-style:italic;margin-top:8px;text-align:center;}
+
+  .desafio-card{background:#fff;border:2px solid #86efac;border-radius:14px;
+    margin-bottom:22px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06);}
+  .desafio-card-header{background:linear-gradient(135deg,#15803d,#16a34a);color:#fff;
+    padding:16px 22px;display:flex;justify-content:space-between;align-items:center;
+    gap:12px;flex-wrap:wrap;}
+  .desafio-card-header h3{color:#fff;margin:0;border:0;font-size:1.1rem;padding:0;
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .desafio-numero{background:#fbbf24;color:#14532d;width:36px;height:36px;
+    border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:1.1rem;flex-shrink:0;}
+  .desafio-nivel{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);
+    padding:4px 12px;border-radius:20px;font-size:.74rem;font-weight:800;
+    text-transform:uppercase;letter-spacing:.5px;}
+  .desafio-card-body{padding:22px;}
+
+  .briefing-box{background:#f0fdf4;border-left:4px solid #16a34a;border-radius:8px;
+    padding:14px 18px;margin-bottom:16px;font-size:.92rem;color:#14532d;line-height:1.65;}
+  .briefing-box strong{color:#065f46;}
+
+  .requisitos-lista{background:#fffbeb;border:2px dashed #f59e0b;border-radius:10px;
+    padding:14px 20px;margin:14px 0;list-style:none;margin-left:0;}
+  .requisitos-lista li{padding:6px 0 6px 26px;position:relative;color:#78350f;
+    font-size:.9rem;line-height:1.5;}
+  .requisitos-lista li::before{content:'✓';position:absolute;left:0;
+    color:#15803d;font-weight:900;font-size:1rem;}
+
+  .dicas-bloco{background:#e0f2fe;border-radius:10px;padding:14px 20px;margin:14px 0;
+    font-size:.88rem;color:#0c4a6e;line-height:1.7;}
+  .dicas-bloco h5{color:#075985;margin-bottom:8px;font-size:.95rem;
+    display:flex;align-items:center;gap:6px;}
+  .dicas-bloco ul{margin:6px 0 0 20px;}
+  .dicas-bloco li{margin-bottom:6px;}
+
+  .checklist-el{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+  .checklist-el span{background:#1e293b;color:#7dd3fc;font-family:monospace;
+    font-size:.78rem;font-weight:700;padding:4px 10px;border-radius:6px;
+    border:1px solid #334155;}
+
+  .estrutura-pasta{background:#0a1420;color:#e2e8f0;padding:20px;border-radius:12px;
+    font-family:'Courier New',monospace;font-size:.85rem;line-height:1.7;
+    overflow-x:auto;white-space:pre;margin:14px 0;border:2px solid #334155;}
+  .estrutura-pasta .pasta{color:#7dd3fc;font-weight:800;}
+  .estrutura-pasta .arquivo{color:#86efac;}
+  .estrutura-pasta .destaque{color:#fbbf24;font-weight:700;}
+
+  .toast-notificacao{position:fixed;bottom:24px;right:24px;background:#0d9488;color:#fff;
+    padding:12px 20px;border-radius:10px;font-weight:bold;font-size:.85rem;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);display:none;z-index:9999;
+    animation:slideUp .3s ease;max-width:340px;line-height:1.5;}
+  @keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .btn-top{position:fixed;bottom:20px;right:20px;background:var(--primary);color:#fff;
+    border:none;padding:10px 18px;border-radius:50px;cursor:pointer;font-size:12px;
+    font-weight:700;box-shadow:0 4px 15px rgba(0,0,0,.25);z-index:100;}
+
+  @media (max-width:768px){
+    .header h1{font-size:1.6rem;}
+    .card{padding:18px 14px;}
+    .tab-btn{padding:10px 14px;font-size:.8rem;}
+    .desenho-tabela{font-size:.78rem;}
+    .desenho-tabela th,.desenho-tabela td{padding:8px 10px;font-size:.78rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="inicio">
+  <header class="header">
+    <h1>📊 TEMA <span>04</span> &bull; Tabelas em HTML — Desafios Guiados</h1>
+    <p>Cinco desafios práticos de tabelas com semântica e um projeto de indexação em lista</p>
+    <div class="badge-group">
+      <span class="badge">🎯 5 Desafios básicos</span>
+      <span class="badge">📇 index.html com listas</span>
+      <span class="badge">🏷️ Semântica sempre</span>
+    </div>
+  </header>
+
+  <nav class="tabs-nav">
+    <button type="button" class="tab-btn active" data-aba="aba-visao">🧭 Visão geral</button>
+    <button type="button" class="tab-btn" data-aba="aba-desafios">🎯 1. Desafios</button>
+    <button type="button" class="tab-btn" data-aba="aba-index">📇 2. index.html</button>
+  </nav>
+
+  <!-- ============ ABA VISÃO GERAL ============ -->
+  <div id="aba-visao" class="tab-content active">
+    <section class="card">
+      <h2>🎯 O que este laboratório entrega</h2>
+      <p>Cinco desafios de tabela, do mais simples ao mais completo, todos resolvíveis apenas com as tags que vimos até aqui. O foco é <strong>hierarquia semântica</strong> — caption, thead, tbody, tfoot, th, td, scope, colspan, rowspan, e o uso correto das entidades HTML.</p>
+
+      <h3>📊 Lista de desafios</h3>
+      <table class="tabela-logica">
+        <thead>
+          <tr><th>#</th><th>Desafio</th><th>Conceito-chave</th><th>Tempo estimado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>D1</td><td>Boletim de Notas do Trimestre</td><td>caption + thead + tbody + th scope</td><td>15 min</td></tr>
+          <tr><td>D2</td><td>Agenda Semanal de Estudos</td><td>Cabeçalho duplo (th scope="col" + th scope="row")</td><td>20 min</td></tr>
+          <tr><td>D3</td><td>Cronograma de Projetos</td><td>colspan + tfoot com total alinhado por colspan</td><td>20 min</td></tr>
+          <tr><td>D4</td><td>Comparativo de Planos de Curso</td><td>rowspan e célula mesclada verticalmente</td><td>25 min</td></tr>
+          <tr><td>D5</td><td>Boletim Completo com Entidades</td><td>Entidades HTML (&amp;mdash;, &amp;nbsp;, &amp;lt;) e tfoot com totais</td><td>30 min</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🔧 Regras gerais de todos os desafios</h3>
+      <ul>
+        <li><strong>Arquivo por desafio:</strong> <code>desafio-1.html</code>, <code>desafio-2.html</code>, ...</li>
+        <li><strong>Toda tabela</strong> tem <code>&lt;caption&gt;</code> identificando o assunto.</li>
+        <li><strong>Toda tabela</strong> organiza o conteúdo em <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code> e, quando indicado no briefing, <code>&lt;tfoot&gt;</code>.</li>
+        <li><strong>Células de cabeçalho</strong> são <code>&lt;th&gt;</code>, nunca <code>&lt;td&gt;</code>.</li>
+        <li><strong>scope="col"</strong> em cabeçalhos de coluna e <strong>scope="row"</strong> em cabeçalhos de linha.</li>
+        <li><strong>Documento HTML completo</strong> (com <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code> com charset e viewport, <code>&lt;body&gt;</code>).</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============ ABA DESAFIOS ============ -->
+  <div id="aba-desafios" class="tab-content">
+    <section class="card">
+      <h2>🎯 Cinco desafios em ordem crescente de dificuldade</h2>
+      <p>Cada desafio tem <strong>briefing</strong>, <strong>desenho da tabela final</strong> e <strong>dicas de elementos essenciais</strong>. A construção é sua.</p>
+    </section>
+
+    <!-- DESAFIO 1 -->
+    <div class="desafio-card">
+      <div class="desafio-card-header">
+        <h3><span class="desafio-numero">1</span> Boletim de Notas do Trimestre</h3>
+        <span class="desafio-nivel">Básico</span>
+      </div>
+      <div class="desafio-card-body">
+        <div class="briefing-box">
+          <strong>Briefing:</strong> sua turma tem cinco alunos e três disciplinas avaliadas no trimestre. Você precisa entregar um boletim que mostre as notas de cada aluno em cada disciplina. O boletim vai ser lido em celular e impresso — a estrutura precisa ser clara em ambos.
+        </div>
+
+        <h4>🖼️ Desenho da tabela final</h4>
+        <div class="desenho-tabela-wrap">
+          <div class="desenho-tabela-caption">Notas do Trimestre — Front-End 2026</div>
+          <table class="desenho-tabela">
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>HTML</th>
+                <th>CSS</th>
+                <th>JavaScript</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th>Ana</th><td>9,0</td><td>8,5</td><td>8,0</td></tr>
+              <tr><th>João</th><td>7,5</td><td>9,0</td><td>8,5</td></tr>
+              <tr><th>Marina</th><td>8,5</td><td>9,5</td><td>9,0</td></tr>
+              <tr><th>Pedro</th><td>6,5</td><td>7,0</td><td>8,0</td></tr>
+              <tr><th>Larissa</th><td>9,5</td><td>9,0</td><td>9,5</td></tr>
+            </tbody>
+          </table>
+          <p class="legenda-desenho">Sem tfoot nesta primeira versão.</p>
+        </div>
+
+        <h4>🧩 Elementos essenciais</h4>
+        <div class="checklist-el">
+          <span>&lt;table&gt;</span>
+          <span>&lt;caption&gt;</span>
+          <span>&lt;thead&gt;</span>
+          <span>&lt;tbody&gt;</span>
+          <span>&lt;tr&gt;</span>
+          <span>&lt;th scope="col"&gt;</span>
+          <span>&lt;th scope="row"&gt;</span>
+          <span>&lt;td&gt;</span>
+        </div>
+
+        <div class="dicas-bloco">
+          <h5>💡 Dicas de implementação</h5>
+          <ul>
+            <li>O <code>&lt;caption&gt;</code> é o primeiro elemento dentro de <code>&lt;table&gt;</code>. Sempre.</li>
+            <li>As cinco linhas de dados ficam dentro de um único <code>&lt;tbody&gt;</code>.</li>
+            <li>Os cabeçalhos "HTML", "CSS" e "JavaScript" precisam de <code>scope="col"</code>. O cabeçalho "Aluno" também leva <code>scope="col"</code> — é o título da coluna que identifica as linhas por nome.</li>
+            <li>Os nomes dos alunos (primeira célula de cada linha) são <code>&lt;th scope="row"&gt;</code>. Este é o salto conceitual importante: <em>th não é só cabeçalho do topo</em> — é cabeçalho em qualquer direção.</li>
+            <li>Use vírgula decimal (8,5 e não 8.5).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESAFIO 2 -->
+    <div class="desafio-card">
+      <div class="desafio-card-header">
+        <h3><span class="desafio-numero">2</span> Agenda Semanal de Estudos</h3>
+        <span class="desafio-nivel">Básico</span>
+      </div>
+      <div class="desafio-card-body">
+        <div class="briefing-box">
+          <strong>Briefing:</strong> a coordenação do curso quer uma agenda visual das aulas semanais. Cada dia da semana tem aulas em três horários. Você precisa deixar claro qual disciplina acontece em qual dia e horário, sem ambiguidade.
+        </div>
+
+        <h4>🖼️ Desenho da tabela final</h4>
+        <div class="desenho-tabela-wrap">
+          <div class="desenho-tabela-caption">Horário das Aulas — Turma Front-End 2026</div>
+          <table class="desenho-tabela">
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Segunda</th>
+                <th>Terça</th>
+                <th>Quarta</th>
+                <th>Quinta</th>
+                <th>Sexta</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th>08h – 10h</th><td>HTML</td><td>CSS</td><td>JavaScript</td><td>HTML</td><td>Projeto</td></tr>
+              <tr><th>10h – 12h</th><td>CSS</td><td>JavaScript</td><td>HTML</td><td>Projeto</td><td>Projeto</td></tr>
+              <tr><th>14h – 16h</th><td>Projeto</td><td>Projeto</td><td>Projeto</td><td>CSS</td><td>JavaScript</td></tr>
+            </tbody>
+          </table>
+          <p class="legenda-desenho">A coluna "Horário" identifica a linha; as colunas de dias identificam a coluna. Tabela de cabeçalho duplo.</p>
+        </div>
+
+        <h4>🧩 Elementos essenciais</h4>
+        <div class="checklist-el">
+          <span>&lt;caption&gt;</span>
+          <span>&lt;thead&gt;</span>
+          <span>&lt;tbody&gt;</span>
+          <span>&lt;th scope="col"&gt;</span>
+          <span>&lt;th scope="row"&gt;</span>
+          <span>&amp;ndash;</span>
+          <span>&amp;nbsp;</span>
+        </div>
+
+        <div class="dicas-bloco">
+          <h5>💡 Dicas de implementação</h5>
+          <ul>
+            <li>Este é o desafio onde o <code>scope</code> realmente importa. Sem ele, o navegador não consegue decidir se uma célula "HTML" pertence à coluna "Segunda" ou à linha "08h – 10h". Com ambos os <code>scope</code>, fica explícito.</li>
+            <li>Na coluna "Horário", use a entidade <code>&amp;ndash;</code> (en dash, –) para separar as horas: <code>08h&amp;nbsp;&amp;ndash;&amp;nbsp;10h</code>. O <code>&amp;nbsp;</code> impede que "08h" quebre sozinho numa linha.</li>
+            <li>Todas as células da primeira coluna são <code>&lt;th scope="row"&gt;</code>, incluindo o cabeçalho da coluna "Horário" que fica no canto. Ele é coluna E linha ao mesmo tempo — use <code>scope="col"</code> porque está no thead.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESAFIO 3 -->
+    <div class="desafio-card">
+      <div class="desafio-card-header">
+        <h3><span class="desafio-numero">3</span> Cronograma de Projetos</h3>
+        <span class="desafio-nivel">Intermediário</span>
+      </div>
+      <div class="desafio-card-body">
+        <div class="briefing-box">
+          <strong>Briefing:</strong> a feira de projetos do semestre precisa de um cronograma oficial divulgado como tabela. Cada linha é um projeto. Você precisa incluir, além dos dados normais, um rodapé que informe o total de projetos atrasados — e ele não pode parecer isolado da estrutura.
+        </div>
+
+        <h4>🖼️ Desenho da tabela final</h4>
+        <div class="desenho-tabela-wrap">
+          <div class="desenho-tabela-caption">Cronograma da Feira de Projetos 2026</div>
+          <table class="desenho-tabela">
+            <thead>
+              <tr>
+                <th>Projeto</th>
+                <th>Equipe</th>
+                <th>Responsável</th>
+                <th>Entrega</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th>Portal da Cantina</th><td>Alpha</td><td>Marina Silva</td><td>12/11/2026</td><td>Concluído</td></tr>
+              <tr><th>App de Caronas</th><td>Beta</td><td>João Pereira</td><td>20/11/2026</td><td>Em andamento</td></tr>
+              <tr><th>Painel de Notas</th><td>Gamma</td><td>Ana Costa</td><td>05/11/2026</td><td>Atrasado</td></tr>
+              <tr><th>Blog da Escola</th><td>Delta</td><td>Pedro Lima</td><td>28/10/2026</td><td>Atrasado</td></tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4">Total de projetos atrasados</td>
+                <td>2</td>
+              </tr>
+            </tfoot>
+          </table>
+          <p class="legenda-desenho">A célula do total tem <code>colspan="4"</code>. A última coluna recebe o valor.</p>
+        </div>
+
+        <h4>🧩 Elementos essenciais</h4>
+        <div class="checklist-el">
+          <span>&lt;caption&gt;</span>
+          <span>&lt;thead&gt;</span>
+          <span>&lt;tbody&gt;</span>
+          <span>&lt;tfoot&gt;</span>
+          <span>&lt;th scope="col"&gt;</span>
+          <span>&lt;th scope="row"&gt;</span>
+          <span>colspan="4"</span>
+        </div>
+
+        <div class="dicas-bloco">
+          <h5>💡 Dicas de implementação</h5>
+          <ul>
+            <li>O <code>&lt;tfoot&gt;</code> fica entre <code>&lt;/thead&gt;</code> e <code>&lt;/tbody&gt;</code>, no código.</li>
+            <li>Na linha do total, você precisa mesclar as 4 primeiras colunas em uma única célula para o texto "Total de projetos atrasados", e o valor "2" fica isolado na última coluna. Por isso <code>colspan="4"</code> e depois <code>&lt;td&gt;2&lt;/td&gt;</code>.</li>
+            <li>Não use <code>&lt;th&gt;</code> na célula do "2". Não é cabeçalho — é dado.</li>
+            <li>Verifique: 4 (do colspan) + 1 (a célula do 2) = 5 colunas, igual ao total do cabeçalho. Se der 4 ou 6, a tabela sai torta.</li>
+            <li>Repare que os status "Concluído", "Em andamento" e "Atrasado" são todos <code>&lt;td&gt;</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESAFIO 4 -->
+    <div class="desafio-card">
+      <div class="desafio-card-header">
+        <h3><span class="desafio-numero">4</span> Comparativo de Planos de Curso</h3>
+        <span class="desafio-nivel">Intermediário</span>
+      </div>
+      <div class="desafio-card-body">
+        <div class="briefing-box">
+          <strong>Briefing:</strong> a escola está lançando dois planos — Básico e Completo. Você precisa entregar uma tabela comparativa onde cada recurso aparece uma única vez, agrupado pela categoria a que pertence (Aulas, Projetos, Suporte). Recursos que só existem no plano Completo ficam com o Básico vazio, mas a estrutura precisa estar íntegra.
+        </div>
+
+        <h4>🖼️ Desenho da tabela final</h4>
+        <div class="desenho-tabela-wrap">
+          <div class="desenho-tabela-caption">Comparativo de Planos — 2026</div>
+          <table class="desenho-tabela">
+            <thead>
+              <tr>
+                <th>Categoria</th>
+                <th>Recurso</th>
+                <th>Plano Básico</th>
+                <th>Plano Completo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th rowspan="3">Aulas</th>
+                <td>Vídeos gravados</td><td>Sim</td><td>Sim</td>
+              </tr>
+              <tr>
+                <td>Aulas ao vivo</td><td>Não</td><td>Sim</td>
+              </tr>
+              <tr>
+                <td>Material em PDF</td><td>Sim</td><td>Sim</td>
+              </tr>
+              <tr>
+                <th rowspan="2">Projetos</th>
+                <td>Projeto guiado</td><td>Sim</td><td>Sim</td>
+              </tr>
+              <tr>
+                <td>Correção individual</td><td>Não</td><td>Sim</td>
+              </tr>
+              <tr>
+                <th>Suporte</th>
+                <td>Fórum da comunidade</td><td>Sim</td><td>Sim</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="legenda-desenho">A coluna "Categoria" tem <code>rowspan</code> de 3, 2 e 1 nas linhas correspondentes.</p>
+        </div>
+
+        <h4>🧩 Elementos essenciais</h4>
+        <div class="checklist-el">
+          <span>&lt;caption&gt;</span>
+          <span>&lt;thead&gt;</span>
+          <span>&lt;tbody&gt;</span>
+          <span>&lt;th scope="col"&gt;</span>
+          <span>&lt;th scope="row"&gt;</span>
+          <span>rowspan="3"</span>
+          <span>rowspan="2"</span>
+        </div>
+
+        <div class="dicas-bloco">
+          <h5>💡 Dicas de implementação</h5>
+          <ul>
+            <li>Quando um <code>&lt;th&gt;</code> tem <code>rowspan="3"</code>, nas próximas <strong>duas linhas</strong> você não escreve a célula correspondente. Isso é o que mais confunde: a primeira linha após a mesclagem pula a coluna mesclada.</li>
+            <li>Se sua tabela saiu torta, quase certamente é porque você incluiu uma célula a mais (coluna Aulas repetida) ou a menos (coluna de projeto faltando). Confira uma linha por vez.</li>
+            <li>Use <code>scope="row"</code> nas células de categoria, não <code>scope="col"</code>. Elas são globais por linha mesclada.</li>
+          </ul>
+        </div>
+
+        <div class="highlight-box amber">
+          <strong>Atenção ao colspan/rowspan:</strong> sempre confira se a soma de cada linha chega ao número de colunas do <code>&lt;thead&gt;</code>. Neste desafio são 4 colunas. Na linha 1, você tem <code>rowspan="3"</code> em "Aulas" (ocupa 1 coluna em cada uma das 3 primeiras linhas), "Recurso" (1), Plano Básico (1) e Plano Completo (1) — total 4. Na linha 2, a coluna "Aulas" já está preenchida pela mesclagem, então você escreve só as outras 3.
+        </div>
+      </div>
+    </div>
+
+    <!-- DESAFIO 5 -->
+    <div class="desafio-card">
+      <div class="desafio-card-header">
+        <h3><span class="desafio-numero">5</span> Boletim Completo com Entidades</h3>
+        <span class="desafio-nivel">Completo</span>
+      </div>
+      <div class="desafio-card-body">
+        <div class="briefing-box">
+          <strong>Briefing:</strong> este é o desafio consolidado. Você vai entregar o boletim da turma com três alunos e quatro disciplinas, incluindo o rodapé com a média da turma por disciplina. O título do boletim precisa usar entidades HTML onde faça sentido — por exemplo, travessão (—), sinal de igual e percentual na linha de média. O resultado precisa ficar idêntico ao desenho abaixo.
+        </div>
+
+        <h4>🖼️ Desenho da tabela final</h4>
+        <div class="desenho-tabela-wrap">
+          <div class="desenho-tabela-caption">Boletim Final — Front-End 2026</div>
+          <table class="desenho-tabela">
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>HTML</th>
+                <th>CSS</th>
+                <th>JavaScript</th>
+                <th>Média</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th>Ana</th><td>9,0</td><td>8,5</td><td>8,0</td><td>8,5</td></tr>
+              <tr><th>João</th><td>7,5</td><td>9,0</td><td>8,5</td><td>8,33</td></tr>
+              <tr><th>Marina</th><td>8,5</td><td>9,5</td><td>9,0</td><td>9,0</td></tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">Média da turma</th>
+                <td>8,33</td>
+                <td>9,0</td>
+                <td>8,5</td>
+                <td>8,61</td>
+              </tr>
+            </tfoot>
+          </table>
+          <p class="legenda-desenho">Note o uso de <code>&amp;mdash;</code> no caption e a linha de rodapé com <code>&lt;th scope="row"&gt;</code>.</p>
+        </div>
+
+        <h4>🧩 Elementos essenciais</h4>
+        <div class="checklist-el">
+          <span>&lt;caption&gt;</span>
+          <span>&lt;thead&gt;</span>
+          <span>&lt;tbody&gt;</span>
+          <span>&lt;tfoot&gt;</span>
+          <span>&lt;th scope="col"&gt;</span>
+          <span>&lt;th scope="row"&gt;</span>
+          <span>&amp;mdash;</span>
+          <span>&amp;nbsp;</span>
+          <span>&amp;amp;</span>
+          <span>&amp;lt;</span>
+          <span>&amp;gt;</span>
+        </div>
+
+        <div class="dicas-bloco">
+          <h5>💡 Dicas de implementação</h5>
+          <ul>
+            <li>O título <strong>Boletim Final &mdash; Front-End 2026</strong> usa <code>&amp;mdash;</code> para o travessão.</li>
+            <li>Na linha de média da turma, o primeiro bloco é o cabeçalho "Média da turma" na primeira coluna. Ele é <code>&lt;th scope="row"&gt;</code>, como os nomes dos alunos.</li>
+            <li>Para exibir <code>&lt;</code>, <code>&gt;</code> e <code>&amp;</code> dentro da página, use sempre <code>&amp;lt;</code>, <code>&amp;gt;</code> e <code>&amp;amp;</code>. Caso contrário, o navegador interpreta como código.</li>
+            <li>Não invente valores. Use as notas dadas no desenho.</li>
+            <li>Se algum aluno tiver valor vazio (—) numa célula, escreva <code>&amp;mdash;</code> dentro do <code>&lt;td&gt;</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ABA INDEX ============ -->
+  <div id="aba-index" class="tab-content">
+    <section class="card">
+      <h2>📇 index.html — a página de entrada do projeto</h2>
+      <p>Agora você vai montar a página de entrada que lista todos os desafios entregues. Este é o seu primeiro exercício prático com <strong>listas e links</strong> dentro de um documento HTML real.</p>
+
+      <div class="highlight-box blue">
+        <strong>Modelo mental:</strong> o <code>index.html</code> é a porta do seu projeto. Quando o professor abrir a pasta entregue, ele verá este arquivo primeiro e dele navegará para cada desafio.
+      </div>
+
+      <h3>🌳 Estrutura de pastas esperada</h3>
+      <div class="estrutura-pasta">
+<span class="pasta">tema04-tabelas/</span>
+├── <span class="destaque">index.html</span>          <span class="arquivo">← você vai criar esta</span>
+├── <span class="arquivo">desafio-1.html</span>      <span class="arquivo">← boletim de notas</span>
+├── <span class="arquivo">desafio-2.html</span>      <span class="arquivo">← agenda semanal</span>
+├── <span class="arquivo">desafio-3.html</span>      <span class="arquivo">← cronograma de projetos</span>
+├── <span class="arquivo">desafio-4.html</span>      <span class="arquivo">← comparativo de planos</span>
+└── <span class="arquivo">desafio-5.html</span>      <span class="arquivo">← boletim completo</span>
+      </div>
+
+      <h3>🖼️ Desenho da página final</h3>
+      <div class="desenho-tabela-wrap" style="background:#fff;">
+        <h1 style="color:#0c4a6e;margin-bottom:4px;font-size:1.5rem;">📚 Tema 04 — Tabelas em HTML</h1>
+        <p style="color:#475569;margin-bottom:16px;font-size:.9rem;">Desafios entregues pela turma</p>
+
+        <h2 style="color:#0369a1;margin-bottom:8px;font-size:1.1rem;">🎯 Desafios</h2>
+        <ol style="margin:8px 0 16px 22px;line-height:2;">
+          <li><a href="desafio-1.html" style="color:#0284c7;font-weight:600;">Boletim de Notas do Trimestre</a></li>
+          <li><a href="desafio-2.html" style="color:#0284c7;font-weight:600;">Agenda Semanal de Estudos</a></li>
+          <li><a href="desafio-3.html" style="color:#0284c7;font-weight:600;">Cronograma de Projetos</a></li>
+          <li><a href="desafio-4.html" style="color:#0284c7;font-weight:600;">Comparativo de Planos de Curso</a></li>
+          <li><a href="desafio-5.html" style="color:#0284c7;font-weight:600;">Boletim Completo com Entidades</a></li>
+        </ol>
+
+        <h2 style="color:#0369a1;margin-bottom:8px;font-size:1.1rem;">🔗 Referências</h2>
+        <ul style="margin:8px 0 16px 22px;line-height:2;">
+          <li><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/table" target="_blank" rel="noopener noreferrer" style="color:#0284c7;font-weight:600;">MDN — &lt;table&gt;</a></li>
+          <li><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/a" target="_blank" rel="noopener noreferrer" style="color:#0284c7;font-weight:600;">MDN — &lt;a&gt;</a></li>
+        </ul>
+
+        <p style="color:#64748b;font-size:.82rem;margin-top:20px;padding-top:12px;border-top:1px solid #e2e8f0;">&copy; 2026 &mdash; Programação Front-End</p>
+      </div>
+      <p class="legenda-desenho">Desenho visual. Sua implementação deve ser só marcação semântica.</p>
+
+      <h3>🧩 Elementos essenciais</h3>
+      <div class="checklist-el">
+        <span>&lt;h1&gt;</span>
+        <span>&lt;h2&gt;</span>
+        <span>&lt;ol&gt;</span>
+        <span>&lt;ul&gt;</span>
+        <span>&lt;li&gt;</span>
+        <span>&lt;a href&gt;</span>
+        <span>&amp;copy;</span>
+        <span>&amp;mdash;</span>
+        <span>target="_blank"</span>
+        <span>rel="noopener noreferrer"</span>
+      </div>
+
+      <div class="dicas-bloco">
+        <h5>💡 Dicas de implementação</h5>
+        <ul>
+          <li>Use <code>&lt;ol&gt;</code> (lista ordenada) para os desafios, porque a ordem importa: do mais simples ao mais complexo.</li>
+          <li>Use <code>&lt;ul&gt;</code> (lista não ordenada) para as referências, porque ali a ordem não faz diferença.</li>
+          <li>Cada item de lista leva um <code>&lt;a href="...">Texto</a></code> dentro. O <code>href</code> é o caminho do arquivo: <code>desafio-1.html</code>, <code>desafio-2.html</code>, etc. Este é o caso do link <strong>relativo</strong> — está na mesma pasta.</li>
+          <li>Para os links externos (MDN), use <code>target="_blank"</code> e <code>rel="noopener noreferrer"</code>. Sem <code>rel</code>, o link é inseguro.</li>
+          <li><code>&amp;copy;</code> renderiza o símbolo de copyright ©. <code>&amp;mdash;</code> renderiza travessão —.</li>
+          <li>Quando os arquivos estiverem numerados com "desafio-1" a "desafio-5", o <code>href</code> fica coerente com o nome do arquivo. Se você renomear algum arquivo, atualize o <code>href</code> correspondente também.</li>
+        </ul>
+      </div>
+
+      <div class="highlight-box amber">
+        <strong>Erro clássico:</strong> chamar o arquivo de <code>Index.html</code> com letra maiúscula, ou <code>INDEX.html</code> em caixa alta. O servidor pode ser case-sensitive. Use sempre <code>index.html</code>, minúsculo. Este é o padrão universal de página de entrada na web.
+      </div>
+
+      <div class="highlight-box amber">
+        <strong>Outro erro clássico:</strong> colocar o <code>href</code> com caminho absoluto (<code>href="/desafio-1.html"</code>) sem entender a diferença. <code>/</code> no início significa "raiz do servidor", não "a pasta atual". Se abre localmente (file://) funciona; se muda pra servidor, quebra. Use caminho relativo: <code>desafio-1.html</code>.
+      </div>
+    </section>
+  </div>
+
+  <footer style="text-align:center;color:#94a3b8;font-size:.78rem;padding:22px 0;">
+    📊 Disciplina: Programação Front-End &bull; Tema 04: Tabelas em HTML &bull; 2026
+  </footer>
+</div>
+
+<div class="toast-notificacao" id="toastNotificacao">✅ Feito!</div>
+<button type="button" class="btn-top" id="btnTopo">⬆️ Topo</button>
+
+<script>
+function trocarAba(idAba, botao) {
+  document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function (c) { c.classList.remove('active'); });
+  botao.classList.add('active');
+  var alvo = document.getElementById(idAba);
+  if (alvo) alvo.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () { trocarAba(btn.dataset.aba, btn); });
+  });
+
+  var btnTopo = document.getElementById('btnTopo');
+  if (btnTopo) btnTopo.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+});
+</script>
+</body>
+</html>
